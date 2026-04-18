@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ lesson.title }} - EduPlatform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="{{ url_for('index') }}" class="brand">EduPlatform</a>
+            <div class="nav-links">
+                <a href="{{ url_for('student_dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('student_view_course', course_id=lesson.course_id) }}">Back to Course</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="lesson-header">
+            <h1>{{ lesson.title }}</h1>
+            <span class="badge badge-{{ lesson.lesson_type }}">{{ lesson.lesson_type|upper }}</span>
+            <p class="meta">Passing Score: {{ lesson.passing_percentage }}%</p>
+            
+            {% if progress and progress.score > 0 %}
+                <div class="lesson-progress">
+                    <p>Your Score: <strong>{{ progress.score }}%</strong></p>
+                    {% if progress.completed %}
+                        <p class="success-message">✓ Lesson Completed!</p>
+                    {% else %}
+                        <p class="warning-message">Keep trying to reach {{ lesson.passing_percentage }}%</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <section class="lesson-content">
+            <h2>Lesson Content</h2>
+            <div class="content-box">
+                {{ lesson.content }}
+            </div>
+        </section>
+
+        {% if questions %}
+        <section class="questions-section">
+            <h2>Questions</h2>
+            {% for question in questions %}
+                {% set submission = namespace(found=None) %}
+                {% for sub in current_user.submissions %}
+                    {% if sub.question_id == question.id %}
+                        {% set submission.found = sub %}
+                    {% endif %}
+                {% endfor %}
+                
+                <div class="question-card {% if submission.found and submission.found.graded %}graded{% endif %}">
+                    <h3>Question {{ question.order }}</h3>
+                    <p class="question-text">{{ question.question_text }}</p>
+                    
+                    {% if submission.found %}
+                        <div class="submission-status">
+                            <p><strong>Your Answer:</strong> {{ submission.found.answer }}</p>
+                            {% if submission.found.graded %}
+                                {% if submission.found.is_correct %}
+                                    <p class="correct">✓ Correct</p>
+                                {% else %}
+                                    <p class="incorrect">✗ Incorrect</p>
+                                {% endif %}
+                                {% if submission.found.teacher_feedback %}
+                                    <div class="feedback">
+                                        <strong>Teacher Feedback:</strong>
+                                        <p>{{ submission.found.teacher_feedback }}</p>
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <p class="pending">⏳ Pending grading by teacher</p>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <form method="POST" action="{{ url_for('submit_answer', question_id=question.id) }}" class="answer-form">
+                            {% if question.question_type == 'multiple_choice' %}
+                                <div class="options-list">
+                                    {% set options_list = question.options.split(',') if question.options else [] %}
+                                    {% for option in options_list %}
+                                        <label class="option-label">
+                                            <input type="radio" name="answer" value="{{ option.strip() }}" required>
+                                            {{ option.strip() }}
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                            {% else %}
+                                <textarea name="answer" rows="4" placeholder="Type your answer here..." required></textarea>
+                            {% endif %}
+                            <button type="submit" class="btn btn-primary">Submit Answer</button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </section>
+        {% endif %}
+    </main>
+</body>
+</html>

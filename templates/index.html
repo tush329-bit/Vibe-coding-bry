@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Learning Platform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="{{ url_for('index') }}" class="brand">EduPlatform</a>
+            <div class="nav-links">
+                {% if current_user.is_authenticated %}
+                    {% if current_user.role == 'teacher' %}
+                        <a href="{{ url_for('teacher_dashboard') }}">Dashboard</a>
+                    {% else %}
+                        <a href="{{ url_for('student_dashboard') }}">Dashboard</a>
+                    {% endif %}
+                    <a href="{{ url_for('logout') }}">Logout ({{ current_user.username }})</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}">Login</a>
+                    <a href="{{ url_for('register') }}">Register</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="hero">
+            <h1>Welcome to EduPlatform</h1>
+            <p>Your complete online learning solution</p>
+            <div class="cta-buttons">
+                <a href="{{ url_for('register') }}" class="btn btn-primary">Get Started</a>
+                <a href="{{ url_for('login') }}" class="btn btn-secondary">Login</a>
+            </div>
+        </div>
+
+        <section class="features">
+            <div class="feature-card">
+                <h3>📚 Online Lessons</h3>
+                <p>Access comprehensive course materials anytime, anywhere</p>
+            </div>
+            <div class="feature-card">
+                <h3>📝 Interactive Exercises</h3>
+                <p>Practice with exercises mixed into your lessons</p>
+            </div>
+            <div class="feature-card">
+                <h3>🎯 Progress Tracking</h3>
+                <p>Monitor your completion percentage and scores</p>
+            </div>
+            <div class="feature-card">
+                <h3>👨‍🏫 Teacher Support</h3>
+                <p>Get feedback on open-ended questions from instructors</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 EduPlatform. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

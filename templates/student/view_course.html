@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ course.title }} - EduPlatform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="{{ url_for('index') }}" class="brand">EduPlatform</a>
+            <div class="nav-links">
+                <a href="{{ url_for('student_dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="course-header">
+            <h1>{{ course.title }}</h1>
+            <p>{{ course.description }}</p>
+            
+            <div class="overall-progress">
+                <h3>Overall Progress: {{ overall_percentage|round(0) }}%</h3>
+                <div class="progress-bar large">
+                    <div class="progress-fill" style="width: {{ overall_percentage }}%"></div>
+                </div>
+            </div>
+        </div>
+
+        <section class="lessons-section">
+            <h2>Course Lessons</h2>
+            {% if lessons %}
+                <div class="list-container">
+                    {% for lesson in lessons %}
+                        {% set progress_data = lesson_progress.get(lesson.id, {'completed': False, 'score': 0}) %}
+                        <div class="list-item {% if progress_data.completed %}completed{% endif %}">
+                            <div class="list-item-info">
+                                <h3>
+                                    {% if progress_data.completed %}
+                                        ✓ {{ lesson.title }}
+                                    {% else %}
+                                        {{ lesson.order }}. {{ lesson.title }}
+                                    {% endif %}
+                                </h3>
+                                <p>Type: {{ lesson.lesson_type }} | Required: {{ lesson.passing_percentage }}%</p>
+                                {% if progress_data.score > 0 or progress_data.completed %}
+                                    <p class="score-badge">Your Score: {{ progress_data.score }}%</p>
+                                {% endif %}
+                            </div>
+                            <div class="list-item-actions">
+                                {% if loop.first or (loop.index > 1 and lesson_progress.get(lessons[loop.index - 2].id, {}).get('completed', False)) %}
+                                    <a href="{{ url_for('student_view_lesson', lesson_id=lesson.id) }}" class="btn btn-primary">
+                                        {% if progress_data.completed %}Review{% else %}Start{% endif %}
+                                    </a>
+                                {% else %}
+                                    <span class="btn btn-disabled" title="Complete previous lesson first">Locked</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="empty-state">No lessons available yet.</p>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>

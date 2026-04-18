@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - EduPlatform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="{{ url_for('index') }}" class="brand">EduPlatform</a>
+            <div class="nav-links">
+                <a href="{{ url_for('student_dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('logout') }}">Logout ({{ current_user.username }})</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="dashboard-header">
+            <h1>Student Dashboard</h1>
+        </div>
+
+        <section class="my-courses-section">
+            <h2>My Enrolled Courses</h2>
+            {% if enrollments %}
+                <div class="card-grid">
+                    {% for enrollment in enrollments %}
+                        <div class="card">
+                            <h3>{{ enrollment.course.title }}</h3>
+                            <p>{{ enrollment.course.description }}</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{ enrollment.progress|length / enrollment.course.lessons|length * 100 if enrollment.course.lessons else 0 }}%"></div>
+                            </div>
+                            <p class="meta">Progress: {{ (enrollment.progress|length / enrollment.course.lessons|length * 100)|round(0) if enrollment.course.lessons else 0 }}%</p>
+                            <div class="card-actions">
+                                <a href="{{ url_for('student_view_course', course_id=enrollment.course.id) }}" class="btn btn-primary">Continue Learning</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="empty-state">You haven't enrolled in any courses yet.</p>
+            {% endif %}
+        </section>
+
+        <section class="available-courses-section">
+            <h2>Available Courses</h2>
+            {% if available_courses %}
+                <div class="card-grid">
+                    {% for course in available_courses %}
+                        <div class="card">
+                            <h3>{{ course.title }}</h3>
+                            <p>{{ course.description }}</p>
+                            <p class="meta">By: Teacher ID {{ course.teacher_id }}</p>
+                            <div class="card-actions">
+                                <a href="{{ url_for('enroll_course', course_id=course.id) }}" class="btn btn-secondary">Enroll Now</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="empty-state">No additional courses available.</p>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>

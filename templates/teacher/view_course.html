@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ course.title }} - EduPlatform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="{{ url_for('index') }}" class="brand">EduPlatform</a>
+            <div class="nav-links">
+                <a href="{{ url_for('teacher_dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('view_submissions') }}">Grade Submissions</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="course-header">
+            <h1>{{ course.title }}</h1>
+            <p>{{ course.description }}</p>
+            <a href="{{ url_for('create_lesson', course_id=course.id) }}" class="btn btn-primary">Add Lesson</a>
+        </div>
+
+        <section class="lessons-section">
+            <h2>Lessons</h2>
+            {% if course.lessons %}
+                <div class="list-container">
+                    {% for lesson in course.lessons %}
+                        <div class="list-item">
+                            <div class="list-item-info">
+                                <h3>{{ lesson.title }}</h3>
+                                <p>Type: {{ lesson.lesson_type }} | Passing Score: {{ lesson.passing_percentage }}%</p>
+                                <p>Order: {{ lesson.order }}</p>
+                            </div>
+                            <div class="list-item-actions">
+                                <a href="{{ url_for('create_question', lesson_id=lesson.id) }}" class="btn btn-secondary">Add Question</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="empty-state">No lessons yet. Add your first lesson!</p>
+            {% endif %}
+        </section>
+
+        <section class="students-section">
+            <h2>Enrolled Students</h2>
+            {% if enrollments %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Email</th>
+                            <th>Enrolled Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for enrollment in enrollments %}
+                            <tr>
+                                <td>{{ enrollment.student.username }}</td>
+                                <td>{{ enrollment.student.email }}</td>
+                                <td>{{ enrollment.enrolled_at.strftime('%Y-%m-%d') }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="empty-state">No students enrolled yet.</p>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>

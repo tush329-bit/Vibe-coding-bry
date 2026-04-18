@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Question - EduPlatform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="{{ url_for('index') }}" class="brand">EduPlatform</a>
+            <div class="nav-links">
+                <a href="{{ url_for('teacher_dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="form-container">
+            <h2>Create Question for {{ lesson.title }}</h2>
+            <form method="POST" action="{{ url_for('create_question', lesson_id=lesson.id) }}">
+                <div class="form-group">
+                    <label for="question_text">Question Text</label>
+                    <textarea id="question_text" name="question_text" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="question_type">Question Type</label>
+                    <select id="question_type" name="question_type" required onchange="toggleOptions()">
+                        <option value="multiple_choice">Multiple Choice</option>
+                        <option value="open_ended">Open Ended</option>
+                    </select>
+                </div>
+                <div id="mc-options" class="form-group">
+                    <label for="options">Options (comma-separated)</label>
+                    <input type="text" id="options" name="options" placeholder="Option1, Option2, Option3, Option4">
+                </div>
+                <div id="correct-answer" class="form-group">
+                    <label for="correct_answer">Correct Answer</label>
+                    <input type="text" id="correct_answer" name="correct_answer" placeholder="Enter the correct option">
+                </div>
+                <div class="form-group">
+                    <label for="order">Order</label>
+                    <input type="number" id="order" name="order" value="{{ next_order }}" min="1">
+                </div>
+                <button type="submit" class="btn btn-primary">Create Question</button>
+                <a href="{{ url_for('view_course', course_id=lesson.course_id) }}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        function toggleOptions() {
+            const type = document.getElementById('question_type').value;
+            const mcOptions = document.getElementById('mc-options');
+            const correctAnswer = document.getElementById('correct-answer');
+            
+            if (type === 'multiple_choice') {
+                mcOptions.style.display = 'block';
+                correctAnswer.style.display = 'block';
+            } else {
+                mcOptions.style.display = 'none';
+                correctAnswer.style.display = 'none';
+            }
+        }
+        
+        // Initialize on page load
+        toggleOptions();
+    </script>
+</body>
+</html>
