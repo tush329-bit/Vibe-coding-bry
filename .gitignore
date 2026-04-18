@@ -1,27 +1,49 @@
 ```
-# Logs and temp files
-*.log
-
-# Database files
-*.db
-
-# Environment files
+# Environment and config files
 .env
 .env.local
 *.env.*
 
-# Dependencies
-venv/
-.venv/
-__pycache__/
-*.pyc
-*$py.class
+# Logs and temporary files
+*.log
+*.tmp
+*.swp
 
-# Editors
+# Editors and IDE
 .vscode/
 .idea/
 
+# Python specific
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+.coverage
+coverage/
+htmlcov/
+
+# Dependencies
+.venv/
+venv/
+env/
+ENV/
+pip-log.txt
+pip-delete-this-directory.txt
+.tox/
+.coverage*
+.nox/
+.pytest_cache/
+.mypy_cache/
+.hypothesis/
+
 # OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 ```
