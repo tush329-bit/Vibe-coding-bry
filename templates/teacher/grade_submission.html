@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Submission - EduPlatform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="{{ url_for('index') }}" class="brand">EduPlatform</a>
+            <div class="nav-links">
+                <a href="{{ url_for('teacher_dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('view_submissions') }}">Grade Submissions</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="grading-container">
+            <h2>Grade Submission</h2>
+            
+            <div class="submission-details">
+                <div class="detail-card">
+                    <h3>Student Information</h3>
+                    <p><strong>Name:</strong> {{ submission.student.username }}</p>
+                    <p><strong>Email:</strong> {{ submission.student.email }}</p>
+                </div>
+                
+                <div class="detail-card">
+                    <h3>Question Details</h3>
+                    <p><strong>Question:</strong></p>
+                    <p class="question-text">{{ question.question_text }}</p>
+                    <p><strong>Type:</strong> {{ question.question_type }}</p>
+                </div>
+                
+                <div class="detail-card">
+                    <h3>Student's Answer</h3>
+                    <p class="answer-text">{{ submission.answer }}</p>
+                    <p><strong>Submitted:</strong> {{ submission.submitted_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                </div>
+            </div>
+
+            <form method="POST" action="{{ url_for('grade_submission', submission_id=submission.id) }}">
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="is_correct" name="is_correct">
+                        Mark as Correct
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="teacher_feedback">Feedback (Optional)</label>
+                    <textarea id="teacher_feedback" name="teacher_feedback" rows="4" placeholder="Provide feedback to the student..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Grade</button>
+                <a href="{{ url_for('view_submissions') }}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

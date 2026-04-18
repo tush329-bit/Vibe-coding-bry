@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade Submissions - EduPlatform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="{{ url_for('index') }}" class="brand">EduPlatform</a>
+            <div class="nav-links">
+                <a href="{{ url_for('teacher_dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('view_submissions') }}">Grade Submissions</a>
+                <a href="{{ url_for('logout') }}">Logout ({{ current_user.username }})</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="dashboard-header">
+            <h1>Pending Submissions to Grade</h1>
+        </div>
+
+        <section class="submissions-section">
+            {% if submissions %}
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Question</th>
+                            <th>Answer Preview</th>
+                            <th>Submitted At</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for submission in submissions %}
+                            <tr>
+                                <td>{{ submission.student.username }}</td>
+                                <td>{{ submission.question.question_text[:50] }}...</td>
+                                <td>{{ submission.answer[:50] }}...</td>
+                                <td>{{ submission.submitted_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>
+                                    <a href="{{ url_for('grade_submission', submission_id=submission.id) }}" class="btn btn-primary">Grade</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="empty-state">No pending submissions to grade. Great job!</p>
+            {% endif %}
+        </section>
+    </main>
+</body>
+</html>

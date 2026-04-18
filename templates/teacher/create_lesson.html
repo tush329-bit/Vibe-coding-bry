@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Lesson - EduPlatform</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="{{ url_for('index') }}" class="brand">EduPlatform</a>
+            <div class="nav-links">
+                <a href="{{ url_for('teacher_dashboard') }}">Dashboard</a>
+                <a href="{{ url_for('logout') }}">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="form-container">
+            <h2>Create Lesson for {{ course.title }}</h2>
+            <form method="POST" action="{{ url_for('create_lesson', course_id=course.id) }}">
+                <div class="form-group">
+                    <label for="title">Lesson Title</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="content">Content</label>
+                    <textarea id="content" name="content" rows="6" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="lesson_type">Lesson Type</label>
+                    <select id="lesson_type" name="lesson_type" required>
+                        <option value="content">Content (Learning Material)</option>
+                        <option value="exercise">Exercise</option>
+                        <option value="exam">Exam</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="passing_percentage">Passing Percentage (%)</label>
+                    <input type="number" id="passing_percentage" name="passing_percentage" value="70" min="0" max="100">
+                </div>
+                <div class="form-group">
+                    <label for="order">Order</label>
+                    <input type="number" id="order" name="order" value="{{ next_order }}" min="1">
+                </div>
+                <button type="submit" class="btn btn-primary">Create Lesson</button>
+                <a href="{{ url_for('view_course', course_id=course.id) }}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+    </main>
+</body>
+</html>
