@@ -1,49 +1,46 @@
 ```
-# Environment and config files
+# Compiled Python files
+*.pyc
+__pycache__/
+
+# Log files
+*.log
+server.log
+
+# Environment files
 .env
 .env.local
 *.env.*
 
-# Logs and temporary files
-*.log
-*.tmp
-*.swp
+# Dependencies
+.venv/
+venv/
+node_modules/
 
-# Editors and IDE
+# Build artifacts
+dist/
+build/
+target/
+
+# Editors
 .vscode/
 .idea/
 
-# Python specific
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-*.so
+# Temporary files
+*.tmp
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Coverage
 .coverage
 coverage/
 htmlcov/
 
-# Dependencies
-.venv/
-venv/
-env/
-ENV/
-pip-log.txt
-pip-delete-this-directory.txt
-.tox/
-.coverage*
-.nox/
-.pytest_cache/
+# Python cache
 .mypy_cache/
-.hypothesis/
-
-# OS generated files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
+.pytest_cache/
 ```
