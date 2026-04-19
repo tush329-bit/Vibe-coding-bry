@@ -112,6 +112,11 @@ def register():
         password = request.form.get('password')
         role = request.form.get('role')
         
+        # Validate required fields
+        if not all([username, email, password, role]):
+            flash('All fields are required', 'error')
+            return redirect(url_for('register'))
+        
         if User.query.filter_by(username=username).first():
             flash('Username already exists', 'error')
             return redirect(url_for('register'))
@@ -485,7 +490,7 @@ def submit_answer(question_id):
     # Update or create progress
     progress = Progress.query.filter_by(enrollment_id=enrollment.id, lesson_id=lesson.id).first()
     if not progress:
-        progress = Progress(enrollment_id=enrollment.id, lesson_id=lesson_id)
+        progress = Progress(enrollment_id=enrollment.id, lesson_id=lesson.id)
         db.session.add(progress)
     
     # Calculate score for the lesson

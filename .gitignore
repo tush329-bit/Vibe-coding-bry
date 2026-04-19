@@ -1,9 +1,11 @@
 ```
-# Logs and temp files
-*.log
+# Compiled Python files
+*.pyc
+__pycache__/
 
-# Database files
-*.db
+# Log files
+*.log
+server.log
 
 # Environment files
 .env
@@ -11,17 +13,34 @@
 *.env.*
 
 # Dependencies
-venv/
 .venv/
-__pycache__/
-*.pyc
-*$py.class
+venv/
+node_modules/
+
+# Build artifacts
+dist/
+build/
+target/
 
 # Editors
 .vscode/
 .idea/
 
-# OS generated files
+# Temporary files
+*.tmp
+*.swp
+*.swo
+
+# OS files
 .DS_Store
 Thumbs.db
+
+# Coverage
+.coverage
+coverage/
+htmlcov/
+
+# Python cache
+.mypy_cache/
+.pytest_cache/
 ```
